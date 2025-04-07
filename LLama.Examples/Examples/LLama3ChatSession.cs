@@ -13,10 +13,10 @@ public class LLama3ChatSession
 {
     public static async Task Run()
     {
-        var modelPath = UserSettings.GetModelPath();
+        var modelPath = "/Users/hannahhaken/workarea/LLamaSharp/Meta-Llama-3.1-8B-Instruct-Q3_K_L.gguf";
         var parameters = new ModelParams(modelPath)
         {
-            GpuLayerCount = 10
+            GpuLayerCount = 0
         };
 
         using var model = LLamaWeights.LoadFromFile(parameters);
@@ -47,6 +47,8 @@ public class LLama3ChatSession
             MaxTokens = -1, // keep generating tokens until the anti prompt is encountered
             AntiPrompts = ["User:"] // model specific end of turn string (or default)
         };
+        
+        
 
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("The chat session has started.");

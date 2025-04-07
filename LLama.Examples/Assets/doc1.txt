@@ -1,0 +1,7 @@
+Redirects
+
+Redirects are an entirely necessary element of website management, to the point where it is extremely rare that you audit a website which has no redirects at all.
+
+From a user perspective, redirects are generally not that bad, assuming the user ends up on the correct destination page eventually. But they do add some additional time when loading the page, which is not a good thing, and when you end up with big chains of redirects it is most definitely a bad thing.
+
+From a search engine perspective, internal redirects are sub-optimal. They force the crawler to request additional pages, which essentially means it has to work harder. If it has to do extra work following redirects in order to access certain pages, it may use up your website's allocated crawl budget before it has finished crawling all your pages.

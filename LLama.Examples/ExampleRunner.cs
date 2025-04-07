@@ -6,6 +6,7 @@ public class ExampleRunner
     private static readonly Dictionary<string, Func<Task>> Examples = new()
     {
         { "Chat Session: LLama3", LLama3ChatSession.Run },
+        { "Chat Session: LLama3WithEmbeddings", LLama3ChatWithEmbeddings.Run },
         { "Chat Session: LLama2", LLama2ChatSession.Run },
         { "Chat Session: History", ChatSessionWithHistory.Run },
         { "Chat Session: Role names", ChatSessionWithRoleName.Run },
@@ -25,7 +26,7 @@ public class ExampleRunner
         { "Grammar: Constrain response to json format", GrammarJsonResponse.Run },
         { "Kernel Memory: Document Q&A", KernelMemory.Run },
         { "Kernel Memory: Save and Load", KernelMemorySaveAndLoad.Run },
-		{ "Semantic Kernel: HomeAutomation", SemanticKernelHomeAutomation.Run },
+        { "Semantic Kernel: HomeAutomation", SemanticKernelHomeAutomation.Run },
         { "Semantic Kernel: Prompt", SemanticKernelPrompt.Run },
         { "Semantic Kernel: Chat", SemanticKernelChat.Run },
         { "Semantic Kernel: Store", SemanticKernelMemory.Run },
@@ -38,7 +39,13 @@ public class ExampleRunner
         { "Batched Executor: Beam Search", BatchedExecutorBeamSearch.Run },
         { "Custom Sampling Pipeline", CustomSampler.Run },
         { "Speech Chat: Integration with Whisper.net", SpeechChat.Run },
-        { "Exit", () => { Environment.Exit(0); return Task.CompletedTask; } }
+        {
+            "Exit", () =>
+            {
+                Environment.Exit(0);
+                return Task.CompletedTask;
+            }
+        }
     };
 
     public static async Task Run()
