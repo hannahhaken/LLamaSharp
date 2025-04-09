@@ -17,52 +17,43 @@ public class ChromaService
         var httpClient = new HttpClient();
         var chromaClient = new ChromaClient(configOptions, httpClient);
 
+        // await chromaClient.DeleteCollection(collectionName);
+
         var collection = await chromaClient.GetOrCreateCollection(collectionName);
         var collectionClient = new ChromaCollectionClient(collection, configOptions, httpClient);
 
         return new ChromaService(collectionClient);
     }
 
-    public async Task SeedSampleMovieData()
+    public async Task AddDocumentsAsync(List<string> ids, List<string> texts, List<Dictionary<string, object>> metadata,
+        LlamaEmbedderService embedder)
     {
-        List<string> movieIds = ["1", "2", "3", "4", "5"];
+        var embeddings = new List<ReadOnlyMemory<float>>();
 
-        List<ReadOnlyMemory<float>> descriptionEmbeddings =
-        [
-            new[] { 0.10022575f, -0.23998135f },
-            new[] { 0.10327095f, 0.2563685f },
-            new[] { 0.095857024f, -0.201278f },
-            new[] { 0.106827796f, 0.21676421f },
-            new[] { 0.09568083f, -0.21177962f }
-        ];
+        foreach (var text in texts)
+        {
+            var embedding = await embedder.GetEmbeddingsAsync(text);
+            embeddings.Add(new ReadOnlyMemory<float>(embedding));
+        }
 
-        List<Dictionary<string, object>> metadata =
-        [
-            new() { ["Title"] = "The Lion King" },
-            new() { ["Title"] = "Inception" },
-            new() { ["Title"] = "Toy Story" },
-            new() { ["Title"] = "Pulp Fiction" },
-            new() { ["Title"] = "Shrek" }
-        ];
-
-        await _collectionClient.Add(movieIds, descriptionEmbeddings, metadata);
+        await _collectionClient.Add(ids, embeddings, metadata);
     }
 
-    public async Task RunSampleQuery()
+    public async Task RunSampleQuery(LlamaEmbedderService embedder)
     {
-        List<ReadOnlyMemory<float>> queryEmbedding = [new([0.12217915f, -0.034832448f])];
+        var userQuery = "What are the key takeaways?";
+        var queryEmbedding = await embedder.GetEmbeddingsAsync(userQuery);
 
-        var queryResult = await _collectionClient.Query(
-            queryEmbeddings: queryEmbedding,
-            nResults: 2,
-            include: ChromaQueryInclude.Metadatas | ChromaQueryInclude.Distances);
+        var result = await _collectionClient.Query(
+            queryEmbeddings: [new ReadOnlyMemory<float>(queryEmbedding)],
+            nResults: 3,
+            include: ChromaQueryInclude.Metadatas | ChromaQueryInclude.Distances
+        );
 
-        foreach (var result in queryResult)
+        foreach (var item in result.SelectMany(r => r))
         {
-            foreach (var item in result)
-            {
-                Console.WriteLine($"Title: {(string)item.Metadata["Title"] ?? string.Empty} {item.Distance}");
-            }
+            var title = item.Metadata.TryGetValue("Title", out var t) ? t.ToString() : "(no title)";
+            Console.WriteLine($"🔍 Match: {title} | Distance: {item.Distance:F4}");
         }
     }
 }
