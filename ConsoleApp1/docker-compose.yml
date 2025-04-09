@@ -1,0 +1,7 @@
+services:
+    chroma:
+        image: chromadb/chroma:0.6.3
+        volumes:
+            - ./chroma-data:/data
+        ports:
+            - 8000:8000

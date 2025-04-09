@@ -1,12 +1,15 @@
+using System.Diagnostics.CodeAnalysis;
 using Spectre.Console;
 using LLama.Examples.Examples;
 
+[Experimental("SKEXP0020")]
 public class ExampleRunner
 {
     private static readonly Dictionary<string, Func<Task>> Examples = new()
     {
         { "Chat Session: LLama3", LLama3ChatSession.Run },
         { "Chat Session: LLama3WithEmbeddings", LLama3ChatWithEmbeddings.Run },
+        { "Chat Session: LLama3WithChroma", LLama3ChatWithChroma.Run },
         { "Chat Session: LLama2", LLama2ChatSession.Run },
         { "Chat Session: History", ChatSessionWithHistory.Run },
         { "Chat Session: Role names", ChatSessionWithRoleName.Run },
