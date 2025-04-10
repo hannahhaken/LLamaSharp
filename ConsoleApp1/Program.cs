@@ -1,23 +1,17 @@
-﻿using System.Net.NetworkInformation;
-using ConsoleApp1;
+﻿using ConsoleApp1;
+using ConsoleApp1.Config;
 
-const string chromaUri = "http://localhost:8000/api/v1/";
-const string collectionName = "sitebulb-docs";
-var llamaModelPath = "/Users/hannahhaken/workarea/LLamaSharp/Meta-Llama-3.1-8B-Instruct-Q3_K_L.gguf";
+var config = new LlmConfig(chromaUri: "http://localhost:8000/api/v1/",
+    collectionName: "sitebulb-docs",
+    llamaModelPath: "/Users/hannahhaken/workarea/LLamaSharp/Meta-Llama-3.1-8B-Instruct-Q3_K_L.gguf");
 
-var llamaEmbedder = new LlamaEmbedderService(llamaModelPath);
-var chromaService = await ChromaService.CreateAsync(chromaUri, collectionName);
+var llamaEmbedder = new LlamaEmbedderService(config.LlamaModelPath);
 
-var texts = new List<string>
-{
-    "This is the first chunk of Sitebulb hint text.",
-    "This is the second chunk of text.",
-    "Final chunk for testing."
-};
+// TODO: Make an interface, dependency injection into LlmRunner
 
-var ids = ChunkMetadataBuilder.GenerateDocumentIds(texts.Count, prefix: "sitebulb");
-var metadata = ChunkMetadataBuilder.GenerateMetadataForChunks(texts, source: "sitebulb-docs.txt");
 
-await chromaService.AddDocumentsAsync(ids, texts, metadata, llamaEmbedder);
-
-await chromaService.RunSampleQuery(llamaEmbedder);
+//todo:
+// Put some of the code in program.cs into the Llm runner class.
+// define the dependencies, pass them into the LlmRunner.
+// Goal: LlmRunner will NOT instantiate its own dependencies.
+new LlmRunner(llamaEmbedder, config).Run();

@@ -4,7 +4,12 @@ using LLama.Native;
 
 namespace ConsoleApp1;
 
-public class LlamaEmbedderService : IDisposable
+public interface IEmbedderService
+{
+    public Task<float[]> GetEmbeddingsAsync(string text);
+}
+
+public class LlamaEmbedderService : IEmbedderService, IDisposable
 {
     private readonly LLamaEmbedder _embedder;
     private readonly LLamaWeights _model;

@@ -25,8 +25,8 @@ public class ChromaService
         return new ChromaService(collectionClient);
     }
 
-    public async Task AddDocumentsAsync(List<string> ids, List<string> texts, List<Dictionary<string, object>> metadata,
-        LlamaEmbedderService embedder)
+    public async Task AddDocumentsAsync(List<string> ids, List<string> texts,
+        List<Dictionary<string, object>> metadata, IEmbedderService embedder)
     {
         var embeddings = new List<ReadOnlyMemory<float>>();
 
@@ -39,7 +39,7 @@ public class ChromaService
         await _collectionClient.Add(ids, embeddings, metadata);
     }
 
-    public async Task RunSampleQuery(LlamaEmbedderService embedder)
+    public async Task RunSampleQuery(IEmbedderService embedder)
     {
         var userQuery = "What are the key takeaways?";
         var queryEmbedding = await embedder.GetEmbeddingsAsync(userQuery);
@@ -53,7 +53,7 @@ public class ChromaService
         foreach (var item in result.SelectMany(r => r))
         {
             var title = item.Metadata.TryGetValue("Title", out var t) ? t.ToString() : "(no title)";
-            Console.WriteLine($"🔍 Match: {title} | Distance: {item.Distance:F4}");
+            Console.WriteLine($" Match: {title} | Distance: {item.Distance:F4}");
         }
     }
 }
