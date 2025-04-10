@@ -52,7 +52,7 @@ public class ChromaService
 
         foreach (var item in result.SelectMany(r => r))
         {
-            var title = item.Metadata.TryGetValue("Title", out var t) ? t.ToString() : "(no title)";
+            var title = item.Metadata.TryGetValue("sitebulb-docs", out var t) ? t.ToString() : "(no title)";
             Console.WriteLine($" Match: {title} | Distance: {item.Distance:F4}");
         }
     }

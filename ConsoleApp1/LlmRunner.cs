@@ -13,7 +13,7 @@ public class LlmRunner
         _config = llmConfig;
     }
 
-    public async void Run()
+    public async Task Run()
     {
         var chromaService = await ChromaService.CreateAsync(_config.ChromaUri, _config.CollectionName);
 

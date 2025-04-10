@@ -7,4 +7,4 @@ var config = new LlmConfig(chromaUri: "http://localhost:8000/api/v1/",
 
 var llamaEmbedder = new LlamaEmbedderService(config.LlamaModelPath);
 
-new LlmRunner(llamaEmbedder, config).Run();
+await new LlmRunner(llamaEmbedder, config).Run();
