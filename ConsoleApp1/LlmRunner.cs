@@ -17,18 +17,38 @@ public class LlmRunner
     {
         var chromaService = await ChromaService.CreateAsync(_config.ChromaUri, _config.CollectionName);
 
-        var texts = new List<string>
+
+        //extract into helper method
+        var documentChunks = new List<string>();
+        var metadata = new List<Dictionary<string, object>>();
+        var filePaths = Directory.GetFiles("assets", "*.txt");
+
+        var chunkId = 0;
+
+        foreach (var filePath in filePaths)
         {
-            "This is the first chunk of Sitebulb hint text.",
-            "This is the second chunk of text.",
-            "Final chunk for testing."
-        };
+            var text = await File.ReadAllTextAsync(filePath);
+            var chunks = DocumentChunker.ChunkText(text, maxLength: 1100);
 
-        var ids = ChunkMetadataBuilder.GenerateDocumentIds(texts.Count, prefix: "sitebulb");
-        var metadata = ChunkMetadataBuilder.GenerateMetadataForChunks(texts, source: "sitebulb-docs");
+            var fileName = Path.GetFileName(filePath);
 
-        await chromaService.AddDocumentsAsync(ids, texts, metadata, _embedderService);
+            foreach (var chunk in chunks)
+            {
+                documentChunks.Add(chunk);
+                metadata.Add(new Dictionary<string, object>
+                {
+                    ["ChunkId"] = chunkId,
+                    ["Source"] = fileName,
+                    ["Filename"] = Path.GetFileNameWithoutExtension(fileName)
+                });
 
+                chunkId++;
+            }
+        }
+
+        var ids = ChunkMetadataBuilder.GenerateDocumentIds(documentChunks.Count, prefix: "sitebulb");
+
+        await chromaService.AddDocumentsAsync(ids, documentChunks, metadata, _embedderService);
         await chromaService.RunSampleQuery(_embedderService);
     }
 }

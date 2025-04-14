@@ -1,0 +1,4 @@
+Accessibility
+Website accessibility is about designing and developing your website to make it usable and accessible for users with disabilities. More specifically, accessibility allows disabled users to perceive, understand, navigate, and interact with your website.
+
+Improving your site's accessibility also has a number of user benefits for those who are not disabled, such as users on smaller screens, older users, and people with 'situational limitations' such as in bright sunlight or in an environment where they cannot listen to audio

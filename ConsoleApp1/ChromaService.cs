@@ -36,12 +36,14 @@ public class ChromaService
             embeddings.Add(new ReadOnlyMemory<float>(embedding));
         }
 
-        await _collectionClient.Add(ids, embeddings, metadata);
+        await _collectionClient.Upsert(ids, embeddings, metadata);
     }
 
     public async Task RunSampleQuery(IEmbedderService embedder)
     {
-        var userQuery = "What are the key takeaways?";
+        const string userQuery =
+            "You are a helpful assistant. Use the following documentation to answer. Your answer must remain close to these sentences provided as possible where relevant:\n";
+
         var queryEmbedding = await embedder.GetEmbeddingsAsync(userQuery);
 
         var result = await _collectionClient.Query(
@@ -52,7 +54,7 @@ public class ChromaService
 
         foreach (var item in result.SelectMany(r => r))
         {
-            var title = item.Metadata.TryGetValue("sitebulb-docs", out var t) ? t.ToString() : "(no title)";
+            var title = item.Metadata.TryGetValue("Document-name", out var t) ? t.ToString() : "(no title)";
             Console.WriteLine($" Match: {title} | Distance: {item.Distance:F4}");
         }
     }
