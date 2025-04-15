@@ -1,3 +1,4 @@
+using System.Text;
 using ChromaDB.Client;
 
 namespace ConsoleApp1;
@@ -25,37 +26,60 @@ public class ChromaService
         return new ChromaService(collectionClient);
     }
 
-    public async Task AddDocumentsAsync(List<string> ids, List<string> texts,
+    public async Task AddDocumentsAsync(List<string> ids, List<string> chunks,
         List<Dictionary<string, object>> metadata, IEmbedderService embedder)
     {
         var embeddings = new List<ReadOnlyMemory<float>>();
 
-        foreach (var text in texts)
+        foreach (var chunk in chunks)
         {
-            var embedding = await embedder.GetEmbeddingsAsync(text);
+            var embedding = await embedder.GetEmbeddingsAsync(chunk);
             embeddings.Add(new ReadOnlyMemory<float>(embedding));
         }
 
-        await _collectionClient.Upsert(ids, embeddings, metadata);
+        if (ids.Count != chunks.Count || chunks.Count != embeddings.Count || embeddings.Count != metadata.Count)
+            throw new InvalidOperationException("Mismatched input sizes for Upsert.");
+
+        await _collectionClient.Upsert(ids, embeddings, metadata, chunks);
     }
 
-    public async Task RunSampleQuery(IEmbedderService embedder)
+    public async Task RunQuery(IEmbedderService embedder, ILlmService llmService)
     {
         const string userQuery =
-            "You are a helpful assistant. Use the following documentation to answer. Your answer must remain close to these sentences provided as possible where relevant:\n";
+            "What are redirects?";
 
         var queryEmbedding = await embedder.GetEmbeddingsAsync(userQuery);
 
         var result = await _collectionClient.Query(
             queryEmbeddings: [new ReadOnlyMemory<float>(queryEmbedding)],
             nResults: 3,
-            include: ChromaQueryInclude.Metadatas | ChromaQueryInclude.Distances
+            include: ChromaQueryInclude.Documents | ChromaQueryInclude.Metadatas | ChromaQueryInclude.Distances
         );
+
+        var contextBuilder = new StringBuilder();
 
         foreach (var item in result.SelectMany(r => r))
         {
-            var title = item.Metadata.TryGetValue("Document-name", out var t) ? t.ToString() : "(no title)";
-            Console.WriteLine($" Match: {title} | Distance: {item.Distance:F4}");
+            var docText = item.Document;
+            var title = item.Metadata.TryGetValue("Filename", out var t) ? t.ToString()
+                : item.Metadata.TryGetValue("Source", out var s) ? s.ToString()
+                : "(no title)";
+            contextBuilder.AppendLine($"From {title}:\n{docText}\n");
+            // Console.WriteLine($"Distance: {item.Distance:F4} |  ID: {item.Id}. |Document: {item.Document}");
         }
+
+        var context = contextBuilder.ToString();
+        // Console.WriteLine(context);
+
+        var prompt =
+            $"You are a helpful SEO assistant. Use the following documentation to answer the question below. Your answer must remain close to these sentences provided as possible where relevant\n\n" +
+            $"Documentation:\n{context}\n\n" +
+            $"Question: {userQuery}\n\n";
+
+        Console.WriteLine(prompt);
+        var response = await llmService.GetChatResponse(prompt);
+
+        Console.WriteLine("\n--- LLM Response ---\n");
+        Console.WriteLine(response);
     }
 }
