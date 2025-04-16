@@ -61,22 +61,22 @@ public class ChromaService
         foreach (var item in result.SelectMany(r => r))
         {
             var docText = item.Document;
-            var title = item.Metadata.TryGetValue("Filename", out var t) ? t.ToString()
-                : item.Metadata.TryGetValue("Source", out var s) ? s.ToString()
+            var title = item.Metadata.TryGetValue("Source", out var t)
+                ? t.ToString()
                 : "(no title)";
             contextBuilder.AppendLine($"From {title}:\n{docText}\n");
-            // Console.WriteLine($"Distance: {item.Distance:F4} |  ID: {item.Id}. |Document: {item.Document}");
+            Console.WriteLine($"Distance: {item.Distance:F4} |  ID: {item.Id}. |Document: {item.Document}");
         }
 
         var context = contextBuilder.ToString();
-        // Console.WriteLine(context);
+        Console.WriteLine(context);
 
         var prompt =
             $"You are a helpful SEO assistant. Use the following documentation to answer the question below. Your answer must remain close to these sentences provided as possible where relevant\n\n" +
             $"Documentation:\n{context}\n\n" +
             $"Question: {userQuery}\n\n";
 
-        Console.WriteLine(prompt);
+        Console.WriteLine($"Prompt: {prompt}");
         var response = await llmService.GetChatResponse(prompt);
 
         Console.WriteLine("\n--- LLM Response ---\n");

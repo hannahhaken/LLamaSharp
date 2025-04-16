@@ -2,6 +2,7 @@ services:
     chroma:
         image: chromadb/chroma:0.6.3
         volumes:
-            - ./chroma-data:/data
+            - ./chroma-data:/data:rw
         ports:
             - 8000:8000
+        privileged: true

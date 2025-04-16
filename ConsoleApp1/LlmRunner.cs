@@ -19,27 +19,29 @@ public class LlmRunner
     {
         var chromaService = await ChromaService.CreateAsync(_config.ChromaUri, _config.CollectionName);
 
-        var (documentChunks, metadata) = await ExtractDocumentChunks();
+        await ExtractDocumentChunks(chromaService, _embedderService);
 
-        var ids = ChunkMetadataBuilder.GenerateDocumentIds(documentChunks.Count, prefix: "sitebulb");
-
-        await chromaService.AddDocumentsAsync(ids, documentChunks, metadata, _embedderService);
         await chromaService.RunQuery(_embedderService, _llmService);
     }
 
-    private static async Task<(List<string> documentChunks, List<Dictionary<string, object>> metadata)>
-        ExtractDocumentChunks()
+    private static async Task ExtractDocumentChunks(ChromaService chromaService, IEmbedderService embedderService)
     {
-        var documentChunks = new List<string>();
-        var metadata = new List<Dictionary<string, object>>();
         var filePaths = Directory.GetFiles("assets", "*.txt");
 
         var chunkId = 0;
 
+        Console.WriteLine($"Number of files found: {filePaths.Length}");
+
         foreach (var filePath in filePaths)
         {
+            Console.WriteLine($"Processing file: {filePath}");
             var text = await File.ReadAllTextAsync(filePath);
+
             var chunks = DocumentChunker.ChunkText(text, maxLength: 1100);
+            Console.WriteLine($"Number of chunks: {chunks.Count}");
+
+            var documentChunks = new List<string>();
+            var metadata = new List<Dictionary<string, object>>();
 
             var fileName = Path.GetFileName(filePath);
 
@@ -55,8 +57,21 @@ public class LlmRunner
 
                 chunkId++;
             }
+
+            var ids = ChunkMetadataBuilder.GenerateDocumentIds(documentChunks.Count, prefix: "sitebulb");
+
+            try
+            {
+                Console.WriteLine($"Found {ids.Count} ids");
+                await chromaService.AddDocumentsAsync(ids, documentChunks, metadata, embedderService);
+                Console.WriteLine($"Added {ids.Count} ids");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to add documents for {fileName}: {ex.Message}");
+            }
         }
 
-        return (documentChunks, metadata);
+        Console.WriteLine("Finished extracting chunks...");
     }
 }

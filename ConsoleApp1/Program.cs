@@ -9,4 +9,6 @@ var llamaEmbedder = new LlamaEmbedderService(config.LlamaModelPath);
 
 var llmService = new LlamaChatService(config.LlamaModelPath);
 
-await new LlmRunner(llamaEmbedder, config, llmService).Run();
+var runner = new LlmRunner(llamaEmbedder, config, llmService);
+
+await runner.Run();
