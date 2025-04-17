@@ -1,0 +1,105 @@
+{
+  "ids": [
+    [
+      "sitebulb-15",
+      "sitebulb-19",
+      "sitebulb-5",
+      "sitebulb-23",
+      "sitebulb-1",
+      "sitebulb-11",
+      "sitebulb-13",
+      "sitebulb-9",
+      "sitebulb-21",
+      "sitebulb-6"
+    ]
+  ],
+  "embeddings": null,
+  "documents": [
+    [
+      "specifies Page B as the canonical URL. To do this, we could add the rel=canonical element in the <head> section on Page A; <link rel='canonical' href='https://example.com/page-b' /> If this were to happen, you would describe Page A as 'canonicalized' to Page B.",
+      " canonical that points back to itself) this URL would be Indexable. Self-referential canonicals are a useful default configuration, and are typically set up to help avoid duplicate, parameterized versions of the same URL from getting indexed, for example: https://example.com/page?utm_medium=email How are canonicals implemented? ",
+      " tags, X-Robots-Tag and canonical tags, and how these directives may impact the way in which URLs are crawled and indexed by search engines. What are robots directives? Robots directives are lines of code that provide instruction on how search engines should treat content, from a the perspective ",
+      " one method of assigning canonicals for each URL on a given website. Indexability in Sitebulb Learn more about Sitebulb's indexability check What are robots directives? How are robots directives presented to search engines? What is a canonical? How are canonicals implemented? Indexability in Sitebulb Insights from ",
+      " by default - and they will, in the main, index everything they can find. However, there are certain signals and directives you can give to search engines that instruct them to NOT index certain URLs. Setting URLs so that they are Not Indexable is a relatively common ",
+      " across a whole site, via the use of regular expressions. Robots.txt file , which normally lives on example.com/robots.txt , and is typically used to instruct search engine crawlers which paths, folders or URLs you don't want it to crawl, through 'disallow' rules. ",
+      "followed. However, it is also possible to specify that individual links should not be followed, via the nofollow link element . What is a canonical? In the field of SEO, a 'canonical', is a way of indicating to search engines the 'preferred' version of a ",
+      " called 'meta tags'), which work at a page level. Within the <head> of a page's HTML, you include meta tags like this: <meta name='robots' content='noindex, nofollow'> to control crawling and indexing on a specific URL. X-robots-tags , which can be added",
+      "canonical URL is Page B with the following: <link rel='canonical' href='https://example.com/page-b' /> Canonicals can also be implemented through HTTP headers, where the header looks like this: HTTP/... 200 OK ... Link: <https://example.com/page-b>; rel='canonical' Typically, this is ",
+      " search engines should treat content, from a the perspective of crawling and indexing. By default - or with the absence of any robots directive - search engines work under the basis that every URL they encounter is both crawlable and indexable. This does not mean that they necessarily "
+    ]
+  ],
+  "uris": null,
+  "metadatas": [
+    [
+      {
+        "ChunkId": 16,
+        "Filename": "indexability",
+        "Source": "indexability.txt"
+      },
+      {
+        "Source": "indexability.txt",
+        "Filename": "indexability",
+        "ChunkId": 20
+      },
+      {
+        "Source": "indexability.txt",
+        "Filename": "indexability",
+        "ChunkId": 6
+      },
+      {
+        "Filename": "indexability",
+        "Source": "indexability.txt",
+        "ChunkId": 24
+      },
+      {
+        "Filename": "indexability",
+        "ChunkId": 2,
+        "Source": "indexability.txt"
+      },
+      {
+        "Filename": "indexability",
+        "ChunkId": 12,
+        "Source": "indexability.txt"
+      },
+      {
+        "ChunkId": 14,
+        "Source": "indexability.txt",
+        "Filename": "indexability"
+      },
+      {
+        "Filename": "indexability",
+        "ChunkId": 10,
+        "Source": "indexability.txt"
+      },
+      {
+        "Filename": "indexability",
+        "ChunkId": 22,
+        "Source": "indexability.txt"
+      },
+      {
+        "ChunkId": 7,
+        "Filename": "indexability",
+        "Source": "indexability.txt"
+      }
+    ]
+  ],
+  "distances": [
+    [
+      18362.496,
+      20375.092,
+      25113.666,
+      26283.98,
+      27761.57,
+      28468.822,
+      29093.512,
+      29775.77,
+      30657.283,
+      31203.516
+    ]
+  ],
+  "include": [
+    "metadatas",
+    "documents",
+    "distances"
+  ]
+}

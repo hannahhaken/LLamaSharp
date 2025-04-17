@@ -1,8 +1,18 @@
 services:
     chroma:
-        image: chromadb/chroma:0.6.3
+        image: chromadb/chroma:0.6.4.dev441
         volumes:
-            - ./chroma-data:/data:rw
+            - chroma_data:/data:rw
         ports:
             - 8000:8000
         privileged: true
+        #environment:
+        #    - CHROMA_SERVER_NOFILE=1048575
+        
+volumes:
+    chroma_data:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: '/Users/hannahhaken/workarea/LLamaSharp/ConsoleApp1/chroma-data'

@@ -1,14 +1,21 @@
-﻿using ConsoleApp1;
-using ConsoleApp1.Config;
+﻿using ConsoleApp1.Config;
+using ConsoleApp1.Examples;
 
-var config = new LlmConfig(chromaUri: "http://localhost:8000/api/v1/",
-    collectionName: "sitebulb-docs",
-    llamaModelPath: "/Users/hannahhaken/workarea/LLamaSharp/Meta-Llama-3.1-8B-Instruct-Q3_K_L.gguf");
+// ollama.uk.sitebulb.com
+// chroma.uk.sitebulb.com
 
-var llamaEmbedder = new LlamaEmbedderService(config.LlamaModelPath);
+//using var documentExtractor = new DocumentExtractor(LlmConfig.CreateNomicConfig());
+//using var documentExtractor = new DocumentExtractor(LlmConfig.CreateExternalNomicConfigForEmbeddings());
+//await documentExtractor.AddDocumentationAsync();
 
-var llmService = new LlamaChatService(config.LlamaModelPath);
+//var question = "How do I add my VAT number to Sitebulb invoices?";
+var question = "How do I change my sitebulb project name";
+await OllamaEmbeddingsAndChromaV2.QueryAsync(LlmConfig.CreateLlama3ConfigWithExternalChroma(), question);
 
-var runner = new LlmRunner(llamaEmbedder, config, llmService);
+var question2 = "How do I change my project name";
+await OllamaEmbeddingsAndChromaV2.QueryAsync(LlmConfig.CreateLlama3ConfigWithExternalChroma(), question2);
 
-await runner.Run();
+//await OllamaEmbeddingsAndChromaV1.Run();
+//
+//await OllamaEmbeddingsAndChromaV3.Run();
+//await OllamaEmbeddingsAndChromaV4.Run();

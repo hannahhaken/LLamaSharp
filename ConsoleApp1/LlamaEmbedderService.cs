@@ -19,6 +19,7 @@ public class LlamaEmbedderService : IEmbedderService, IDisposable
     {
         _modelParams = new ModelParams(modelPath)
         {
+            // Embeddings = true,
             GpuLayerCount = 0,
             PoolingType = LLamaPoolingType.Mean
         };
